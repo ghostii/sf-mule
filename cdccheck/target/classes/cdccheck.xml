@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:s3="http://www.mulesoft.org/schema/mule/s3"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:crypto="http://www.mulesoft.org/schema/mule/crypto" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/crypto http://www.mulesoft.org/schema/mule/crypto/current/mule-crypto.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="47755a87-b0d4-4311-a2c2-5cba7e28afa4" >
+		<salesforce:cached-basic-connection username="aditi.sardeshpande123@gmail.com" password="dec@2019" securityToken="Q8heJB2f3Pg0SPrsINDELk14T" />
+	</salesforce:sfdc-config>
+	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="4679388a-361b-49d3-a773-7b32b61e13e6" >
+		<s3:basic-connection accessKey="AKIAWULGSYKJ73XZYEG6" secretKey="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" />
+	</s3:config>
+	<file:config name="File_Config1" doc:name="File Config" doc:id="85257264-17ca-4de3-9bd2-7b585ed55c9e" >
+		<file:connection workingDir="C:\Users\HP\Desktop" />
+	</file:config>
+	<flow name="cdccheckFlow" doc:id="a9218ee4-fe31-4333-972e-5fe7d3d130bb" >
+		<salesforce:replay-channel streamingChannel="/data/AccountChangeEvent" replayOption="ALL" doc:name="Replay channel" doc:id="dec57381-1236-4d64-bd45-ee38ca322c31" config-ref="Salesforce_Config" replayId="-1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d9711f65-892b-4e95-842b-cfac7cd01300" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="d7779d42-2b55-4bd4-ae42-ace6e4943675" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	
+	User: payload.data.payload.ChangeEventHeader.commitUser,
+	Id: payload.data.payload.ChangeEventHeader.recordIds,
+	LastModifiedDate: payload.data.payload.LastModifiedDate,
+	Name: payload.data.payload.Name,
+	Type: payload.data.payload.Type,
+	Phone: payload.data.payload.Phone
+	
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d05f6b6f-1c2b-40b9-9583-e85df7edaac0" message="#[payload]"/>
+		<file:write doc:name="Write" doc:id="af36dbfd-5547-426a-bcc7-9f252f722027" path="C:\Users\HP\AnypointStudio\studio-workspace\cdccheck\s3.csv" mode="APPEND"/>
+		<file:read doc:name="Read" doc:id="65b64773-2174-4b45-b047-0f4d0457eb75" path="C:\Users\HP\AnypointStudio\studio-workspace\cdccheck\s3.csv" config-ref="File_Config1"/>
+		<s3:create-object doc:name="Create object" doc:id="55b7c371-6971-4620-aa10-ec172e4a149a" config-ref="Amazon_S3_Configuration" bucketName="akshaykailasa123" key="mmit.csv"/>
+		<logger level="INFO" doc:name="Logger" doc:id="af9bf590-7d22-4f3b-8356-9287facb0b33" message="#[payload]"/>
+	</flow>
+</mule>
