@@ -17,25 +17,28 @@
 		<mule.maven.plugin.version>3.3.5</mule.maven.plugin.version>
 	</properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.mule.tools.maven</groupId>
-				<artifactId>mule-maven-plugin</artifactId>
-				<version>${mule.maven.plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-				<sharedLibraries>
-                        <sharedLibrary>
-                            <groupId>com.mycompany</groupId>
-                            <artifactId>mysql-connector-java-8.0.19</artifactId>
-                        </sharedLibrary>
-                    </sharedLibraries>
+<build>
+		
+	<plugins>
+            <plugin>
+                <groupId>org.mule.tools.maven</groupId>
+                <artifactId>mule-maven-plugin</artifactId>
+                <version>${mule.maven.plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                <cloudHubDeployment>
+                <objectStoreV2>true</objectStoreV2>
+                <username>shubham_raj123</username>
+                <environment>Sandbox</environment>
+                <workerType>Micro</workerType>
+                <applicationName>cdcmmit</applicationName>
+                <password>Mar@2020</password>
+                <muleVersion>4.2.2</muleVersion>
+                </cloudHubDeployment>
                 </configuration>
-			</plugin>
-		</plugins>
+            </plugin>
+        </plugins>
 	</build>
-
 	<dependencies>
         <dependency>
             <groupId>org.mule.connectors</groupId>
@@ -78,11 +81,6 @@
             <artifactId>mule-db-connector</artifactId>
             <version>1.5.5</version>
             <classifier>mule-plugin</classifier>
-        </dependency>
-    	<dependency>
-            <groupId>com.mycompany</groupId>
-            <artifactId>mysql-connector-java-8.0.19</artifactId>
-            <version>0.1</version>
         </dependency>
     	<dependency>
             <groupId>com.mulesoft.connectors</groupId>
