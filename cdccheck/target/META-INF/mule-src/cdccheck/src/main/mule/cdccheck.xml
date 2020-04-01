@@ -15,9 +15,6 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
 	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="4679388a-361b-49d3-a773-7b32b61e13e6" >
 		<s3:basic-connection accessKey="AKIAWULGSYKJ73XZYEG6" secretKey="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" />
 	</s3:config>
-	<file:config name="File_Config" doc:name="File Config" doc:id="f2d308fe-f980-4ef1-9c42-d12a5e8966a3" >
-		<file:connection workingDir="C:\Users\HP\Desktop" />
-	</file:config>
 	<file:config name="File_Config1" doc:name="File Config" doc:id="85257264-17ca-4de3-9bd2-7b585ed55c9e" >
 		<file:connection workingDir="C:\Users\HP\Desktop" />
 	</file:config>
@@ -43,8 +40,8 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="d05f6b6f-1c2b-40b9-9583-e85df7edaac0" message="#[payload]"/>
-		<file:write doc:name="Write" doc:id="af36dbfd-5547-426a-bcc7-9f252f722027" config-ref="File_Config" path="C:\Users\HP\Desktop\s3.csv" mode="APPEND"/>
-		<file:read doc:name="Read" doc:id="65b64773-2174-4b45-b047-0f4d0457eb75" config-ref="File_Config1" path="C:\Users\HP\Desktop\s3.csv"/>
+		<file:write doc:name="Write" doc:id="af36dbfd-5547-426a-bcc7-9f252f722027" path="C:\Users\HP\AnypointStudio\studio-workspace\cdccheck\s3.csv" mode="APPEND"/>
+		<file:read doc:name="Read" doc:id="65b64773-2174-4b45-b047-0f4d0457eb75" path="C:\Users\HP\AnypointStudio\studio-workspace\cdccheck\s3.csv" config-ref="File_Config1"/>
 		<s3:create-object doc:name="Create object" doc:id="55b7c371-6971-4620-aa10-ec172e4a149a" config-ref="Amazon_S3_Configuration" bucketName="akshaykailasa123" key="mmit.csv"/>
 		<logger level="INFO" doc:name="Logger" doc:id="af9bf590-7d22-4f3b-8356-9287facb0b33" message="#[payload]"/>
 	</flow>
